@@ -1,22 +1,44 @@
 import { useState } from "react";
 
-const API_URL = "PASTE_YOUR_SCRIPT_URL_HERE";
+type Song = {
+  language: string;
+  song: string;
+  memory?: string;
+  date?: string | Date;
+};
 
+type Form = {
+  language: string;
+  song: string;
+  memory: string;
+};
+
+const API_URL = "https://script.google.com/macros/s/replace_here/exec"
 export default function App() {
-  const [songs, setSongs] = useState([]);
-  const [form, setForm] = useState({
+  const [songs, setSongs] = useState<Song[]>([]);
+  const [form, setForm] = useState<Form>({
     language: "Hindi",
     song: "",
-    memory: ""
+    memory: "",
   });
 
   const addSong = async () => {
     if (!form.song) return alert("Enter song name");
 
-    await fetch(API_URL, {
+    // Use a "simple" Content-Type (text/plain) to avoid a CORS preflight OPTIONS
+    // request. Google Apps Script web apps often return 405 on OPTIONS, so sending
+    // a simple POST avoids the preflight and lets doPost receive e.postData.contents.
+    const res = await fetch(API_URL, {
       method: "POST",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(form),
     });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => String(res.status));
+      console.error("Add song failed:", res.status, text);
+      return alert("Failed to add song: " + res.status);
+    }
 
     setSongs([{ ...form, date: new Date() }, ...songs]);
     setForm({ language: "Hindi", song: "", memory: "" });
