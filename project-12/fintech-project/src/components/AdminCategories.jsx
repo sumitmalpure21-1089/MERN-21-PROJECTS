@@ -44,7 +44,7 @@ const AdminCategories = () => {
         </button>
       </div>
 
-      <div style={{ display: "flex", gap: 24 }}>
+      <div className="admin-list" style={{ display: "flex", gap: 24 }}>
         <div>
           <h4>Expenses</h4>
           {categories.expenses.map((c) => {
@@ -57,7 +57,7 @@ const AdminCategories = () => {
                 key={c}
                 style={{ display: "flex", gap: 8, alignItems: "center" }}
               >
-                <span>{c}</span>
+                <span style={{ color: "#e6eef6" }}>{c}</span>
                 {pendingDelete.type === "expense" &&
                 pendingDelete.name === c ? (
                   <>
@@ -89,7 +89,7 @@ const AdminCategories = () => {
                     >
                       Delete
                     </button>
-                    <span style={{ fontSize: 12, color: "#666" }}>
+                    <span style={{ fontSize: 12, color: "var(--muted)" }}>
                       {" "}
                       In use ({usedCount})
                     </span>
@@ -121,7 +121,7 @@ const AdminCategories = () => {
                 key={c}
                 style={{ display: "flex", gap: 8, alignItems: "center" }}
               >
-                <span>{c}</span>
+                <span style={{ color: "#e6eef6" }}>{c}</span>
                 {pendingDelete.type === "income" && pendingDelete.name === c ? (
                   <>
                     <button
@@ -152,7 +152,7 @@ const AdminCategories = () => {
                     >
                       Delete
                     </button>
-                    <span style={{ fontSize: 12, color: "#666" }}>
+                    <span style={{ fontSize: 12, color: "var(--muted)" }}>
                       {" "}
                       In use ({usedCount})
                     </span>

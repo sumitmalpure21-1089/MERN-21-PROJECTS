@@ -1,114 +1,117 @@
 
-* {
-  box-sizing: border-box;
+/* Base and layout */
+* { box-sizing: border-box; }
+:root{
+  /* Dark theme defaults */
+  --bg: linear-gradient(180deg,#071027 0%, #071430 100%);
+  --card-bg: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  --card-border: rgba(255,255,255,0.04);
+  --text: #e6eef6;
+  --muted: #94a3b8;
+  --accent-start: #7c3aed;
+  --accent-end: #5b21b6;
+  --accent-2: #06b6d4; /* teal */
+  --success: #16a34a;
+  --danger: #ef4444;
+  --input-bg: rgba(255,255,255,0.02);
+  --input-border: rgba(255,255,255,0.04);
+  --shadow: 0 8px 24px rgba(2,6,23,0.6);
+  --shadow-hover: 0 18px 40px rgba(2,6,23,0.6);
+  --glass: rgba(255,255,255,0.04);
 }
 
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: #f5f7fa;
-  margin: 0;
-  padding: 0;
-  color: #333;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0; padding: 0; transition: background 240ms ease, color 240ms ease;
 }
 
-/* ===== CONTAINER ===== */
+.container{ width: 92%; max-width: 1100px; margin: 32px auto; }
 
-.container {
-  width: 92%;
-  max-width: 1000px;
-  margin: 40px auto;
+header, main { display:block }
+
+/* Cards */
+.card{
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  padding: 20px; border-radius: 12px; margin-bottom: 18px; transition: transform 220ms ease, box-shadow 220ms ease, background 200ms ease;
 }
 
-/* ===== CARD ===== */
+/* Header */
+.header { display:flex; align-items:center; justify-content:space-between; gap:12px }
+h1{ font-size: 22px; margin:0; color: var(--text) }
 
-.card {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  border: 1px solid #e5e7eb;
+h3{ font-size: 16px; margin:0 0 12px 0; color: var(--muted); }
+
+/* Buttons */
+.btn{ background: linear-gradient(90deg,var(--accent-start), var(--accent-end)); color:var(--btn-text, #fff); border:none; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:600 }
+.btn.secondary{ background: transparent; border: 1px solid var(--card-border); color:var(--muted) }
+.btn.small{ padding:6px 10px; font-size:13px }
+.btn:active{ transform: translateY(1px) }
+
+/* Form controls */
+input, select, textarea{
+  width:100%; padding:10px 12px; border-radius:8px; background: var(--input-bg); color: var(--text); border: 1px solid var(--input-border); margin-bottom:10px; font-size:14px; transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+input::placeholder, textarea::placeholder{ color: var(--muted) }
+input:focus, select:focus, textarea:focus{ outline: none; border-color: var(--accent-start); box-shadow: 0 6px 20px rgba(124,58,237,0.08) }
+
+.flex{ display:flex; gap:12px; flex-wrap:wrap }
+
+/* transaction list */
+.transaction-item{ display:flex; justify-content:space-between; padding:12px 0; border-bottom: 1px solid var(--card-border) }
+.transaction-item strong{ color:var(--text) }
+.transaction-meta{ color:var(--muted); font-size:13px }
+
+.income{ color: var(--success); font-weight:700 }
+.expense{ color: var(--danger); font-weight:700 }
+
+/* Admin lists */
+.admin-list div{ display:flex; gap:8px; align-items:center; margin-bottom:8px }
+
+/* Toasts */
+.toast-container{ position: fixed; right:16px; top:16px; z-index:9999; display:flex; flex-direction:column }
+.toast{
+  background: var(--card-bg);
+  color: var(--text); padding:10px 14px; margin-bottom:8px; border-radius:10px; box-shadow: var(--shadow);
 }
 
-/* ===== FLEX ===== */
+/* Responsive tweaks */
+@media (max-width: 800px){ .flex{ flex-direction:column } .container{ width:95% } }
 
-.flex {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+/* Light theme variables (applied when data-theme="light" on html) */
+html[data-theme="light"]{
+  --bg: linear-gradient(180deg,#f5f7fb 0%, #eef6ff 100%);
+  --card-bg: linear-gradient(180deg,#ffffff,#fbfdff);
+  --card-border: rgba(8,15,30,0.06);
+  --text: #0b1220;
+  --muted: #475569;
+  --accent-start: #4f46e5;
+  --accent-end: #4338ca;
+  --accent-2: #0891b2;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --input-bg: #fff;
+  --input-border: #e6eef6;
+  --shadow: 0 8px 20px rgba(8,15,30,0.06);
+  --shadow-hover: 0 14px 36px rgba(8,15,30,0.08);
+  --btn-text: #fff;
+  --glass: rgba(0,0,0,0.03);
+  color-scheme: light;
 }
 
-/* ===== HEADINGS ===== */
+/* subtle hover lift for cards */
+.card:hover{ transform: translateY(-6px); transition: transform 220ms cubic-bezier(.2,.9,.3,1); box-shadow: var(--shadow-hover) }
 
-h1 {
-  margin: 0;
-  font-size: 24px;
-}
+/* Typography scale */
+html{ font-size: clamp(14px, 1.5vw, 16px); }
 
-h3 {
-  margin-bottom: 15px;
-  font-size: 18px;
-  font-weight: 600;
-}
+/* Toast animations */
+.toast{ transform: translateX(12px); opacity: 0; animation: toast-in 360ms forwards }
+@keyframes toast-in{ from{ transform: translateX(12px); opacity:0 } to{ transform: translateX(0); opacity:1 } }
 
-/* ===== BUTTON ===== */
+/* icon sizing inside buttons */
+.btn svg{ width: 16px; height: 16px; vertical-align: middle; margin-right:8px; }
 
-.btn {
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  background: #2563eb;
-  color: white;
-  font-size: 14px;
-}
-
-.btn:hover {
-  background: #1e40af;
-}
-
-/* ===== INPUTS ===== */
-
-input,
-select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #2563eb;
-}
-
-/* ===== STATUS COLORS ===== */
-
-.income {
-  color: #16a34a;
-  font-weight: 600;
-}
-
-.expense {
-  color: #dc2626;
-  font-weight: 600;
-}
-
-/* ===== TRANSACTION ITEM ===== */
-
-.transaction-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 768px) {
-  .flex {
-    flex-direction: column;
-  }
-} 
