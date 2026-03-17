@@ -1,121 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-
+import { useState } from 'react';
+import { useQuery } from '@apollo/client/react';
+import type { TaskStatus, Task } from './types/task';
+import TaskFilter from './components/TaskFilter';
+import TaskList from './components/TaskList';
+import EditTaskModal from './components/EditTaskModal';
+import TaskForm from './components/TaskForm';
+import { GET_TASKS } from './graphql/queries';
 function App() {
-  const [count, setCount] = useState(0)
+  const[statusFilter, setStatusFilter] = useState<TaskStatus | "">("");
+  const[searchQuery, setSearchQuery] = useState("");
+  const [editingTask,setEditingTask] = useState<Task | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
+  const {data,loading,error,refetch} = useQuery(GET_TASKS, {
+    variables: {
+      status: statusFilter || undefined,
+      search: searchQuery || undefined,
+    },
+    fetchPolicy: "cache-and-network",
+  });
+
+  const handleTaskCreated = () => {
+    setShowForm(false);
+    refetch();
+  }
+
+  const handleTaskUpdated = () => {
+    setEditingTask(null);
+    refetch();
+  }
+  const handleTaskDeleted = () => {
+    refetch();
+  }
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app">
+      <header className="app-header">
+        <div className="header-content">
+          <h1>Task Manager</h1>
+          <button className="btn btn-primary" onClick={() => setShowForm(true)}>+ New Task</button>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </header>
+      <main className="app-main">
+        <TaskFilter
+          statusFilter={statusFilter}
+          searchQuery={searchQuery}
+          onStatusChange={setStatusFilter}
+          onSearchChange={setSearchQuery}
+        />
+        {loading && !data && <div className="loading">Loading tasks...</div>}
+        {error && <div className='error-message'>Error loading tasks: {error.message}</div>}
+        {data && (
+          <TaskList tasks={data.tasks}
+          onEdit={setEditingTask}
+          onDeleted={handleTaskDeleted} 
+          />
+        )}
+      </main>
+      {showForm && (
+        <TaskForm
+          onClose={() => setShowForm(false)}
+          onCreated={handleTaskCreated}
+         />
+      )}
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          onClose={() => setEditingTask(null)}
+          onUpdated={handleTaskUpdated}
+        />
+      )}
+      
+    </div>
+  );
 }
 
-export default App
+export default App;
