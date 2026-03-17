@@ -12,8 +12,12 @@ module Types
 
         def tasks(status: nil, search: nil)
             scope = Task.all.order(created_at: :desc)
-            scope = scope.by_status(status: status) if status.present?
-            scope = scope.search_by_title(search) if search.present?
+            if status.present? && Task::STATUSES.include?(status)
+                scope = scope.where(status: status.to_s)
+            end
+            if search.present?
+                scope = scope.where("title ILIKE ?", "%#{Task.sanitize_sql_like(search.to_s)}%")
+            end
             scope
         end
 
